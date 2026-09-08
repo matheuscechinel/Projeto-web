@@ -1,4 +1,4 @@
-// esse aquivo nao e o original ja que toda vez que tranformoe ele em um codigo binario ele fica dificil de ler, entao ele ta assim
+// esse arquivo nao e o original ja que toda vez que tranformoe ele em um codigo binario ele fica dificil de ler, entao ele ta assim
 
 
 
