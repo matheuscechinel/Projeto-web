@@ -6,7 +6,7 @@ const contasAutorizadas = [
   { email: 'carla@empresa.com', papel: 'fornecedor', empresa: 'Carla Distribuidora' },
 ];
 
-export default function TelaLogin({ aoEntrar }) {
+export default function TelaLogin({ aoSolicitarCodigo }) {
   const [formulario, setFormulario] = useState({ nome: '', email: '' });
   const [erro, setErro] = useState('');
 
@@ -18,7 +18,7 @@ export default function TelaLogin({ aoEntrar }) {
       setErro('E-mail não correspondem a uma conta cadastrada.');
       return;
     }
-    aoEntrar({ ...formulario, papel: conta.papel, empresa: conta.empresa });
+    aoSolicitarCodigo({ ...formulario, papel: conta.papel, empresa: conta.empresa });
   };
 
   return (
@@ -26,12 +26,12 @@ export default function TelaLogin({ aoEntrar }) {
       <section className="cartao-login">
         <header><h1>Login</h1></header>
         <form onSubmit={entrar}>
-          
+
           <label>USUÁRIO<span className="campo-login"><i>♙</i><input name="nome" value={formulario.nome} onChange={atualizarCampo} placeholder="Seu nome" required /></span>
           </label>
 
           <label>E-MAIL<span className="campo-login"><i>✉</i><input name="email" type="email" value={formulario.email} onChange={atualizarCampo} placeholder="gmail@algo.com" required /></span>
-          </label>         
+          </label>
           {erro && <p className="erro-login">{erro}</p>}
           <button className="acao-principal">Confirmar</button>
         </form>

@@ -1,0 +1,78 @@
+.codigo-campos {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.codigo-campos input {
+  width: 48px;
+  height: 54px;
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  background: var(--superficie-clara);
+  color: var(--texto);
+  font-size: 22px;
+  text-align: center;
+}
+
+.codigo-campos input:focus {
+  outline: 2px solid var(--destaque);
+}
+
+.tela-codigo {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+}
+
+.cartao-codigo {
+  text-align: center;
+  width: min(100%, 420px);
+  padding: 32px;
+  background: #1f1f24;
+  border-radius: 23px;
+  font-family: 'DM Sans Variable', sans-serif;
+}
+
+.cartao-codigo h1 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.email-verificacao {
+  margin: 8px 0 0;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.cartao-codigo header {
+  margin-bottom: 4px;
+}
+
+.cartao-codigo form > label {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.cartao-codigo .acao-principal {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.cartao-codigo form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.erro-codigo {
+  color: #df0c0c;
+}

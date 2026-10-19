@@ -19,7 +19,7 @@ body {
   margin: 0;
   background: var(--fundo);
   color: var(--texto);
-  font: 13px 'DM Sans', sans-serif;
+  font: 13px 'DM Sans Variable', sans-serif;
 }
 
 button, input, select {

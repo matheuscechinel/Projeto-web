@@ -1,2 +1,5 @@
 /* tu deve apagar os pedidos  iniciais */
-/* tem algumas fontes do google mais da de trocar depois*/
+/*  git add .
+    git commit -m "alteraçao"
+    git push    */
+    /*so pra eu me lembrar */

@@ -1,4 +1,3 @@
-
 /* isso daqui eu pedi pro gpt gerar alguns pedidos aleatorios ja que o banco nao ta conectado e o adm vai ser ele que vai colocar isso, so apaga isso depois*/
 
 export const pedidosIniciais = [
