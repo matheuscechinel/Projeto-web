@@ -1,9 +1,12 @@
 import { useMemo, useState } from 'react';
+import {
+  comporDataISO,
+  filtrarPedidosEdicao,
+  formatarDataBrasileira,
+} from '../dados/formatar_data.js';
 
 const estabelecimentos = ['Restaurante', 'Sushi 1', 'Sushi 2'];
 
-// esses nomes foram gerados de fora do site nao como armazenar dentro sem o banco entao agente tem que excluir isso depois quando o banco voltar
-// tambem tem fazer o teste pra ver se da certo
 const contasIniciais = [
   { id: 1, nome: 'Henrique Alves', email: 'henrique@empresa.com', acessos: ['Restaurante'] },
   { id: 2, nome: 'Carla Ribeiro', email: 'carla@empresa.com', acessos: ['Sushi 1', 'Sushi 2'] },
@@ -17,11 +20,14 @@ const pedidoVazio = {
   unidade: 'Unidades',
   estabelecimentos: ['Restaurante'],
   prazo: '7',
+  modoValidade: 'semana',
+  validadeEscolhida: '',
 };
 
 function Cartao({ id, icone, titulo, descricao, ativo, aoClicar }) {
   return (
     <button
+      type="button"
       className={ativo ? 'cartao-configuracao ativo' : 'cartao-configuracao'}
       onClick={() => aoClicar(id)}
     >
@@ -35,6 +41,58 @@ function Cartao({ id, icone, titulo, descricao, ativo, aoClicar }) {
   );
 }
 
+function obterDataDeUmaSemana() {
+  const data = new Date();
+  data.setDate(data.getDate() + 7);
+  return [
+    data.getFullYear(),
+    String(data.getMonth() + 1).padStart(2, '0'),
+    String(data.getDate()).padStart(2, '0'),
+  ].join('-');
+}
+
+function SeletorDataValidade({ valor, aoAlterar }) {
+  const dataInicial = valor || obterDataDeUmaSemana();
+  const [ano, mes, dia] = dataInicial.split('-').map(Number);
+  const diasNoMes = new Date(Date.UTC(ano, mes, 0)).getUTCDate();
+  const anoAtual = new Date().getFullYear();
+  const anos = Array.from({ length: Math.max(11, ano - anoAtual + 1) }, (_, indice) => anoAtual + indice);
+  const meses = [
+    'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+    'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
+  ];
+
+  const atualizarData = (novoDia, novoMes, novoAno) => {
+    aoAlterar(comporDataISO(novoDia, novoMes, novoAno));
+  };
+
+  return (
+    <div className="seletor-data-validade">
+      <span>Escolha a data de validade</span>
+      <div className="campos-seletor-data">
+        <label>Dia
+          <select aria-label="Dia da validade" value={dia} onChange={(evento) => atualizarData(Number(evento.target.value), mes, ano)}>
+            {Array.from({ length: diasNoMes }, (_, indice) => indice + 1).map((numero) => (
+              <option key={numero} value={numero}>{String(numero).padStart(2, '0')}</option>
+            ))}
+          </select>
+        </label>
+        <label>Mês
+          <select aria-label="Mês da validade" value={mes} onChange={(evento) => atualizarData(dia, Number(evento.target.value), ano)}>
+            {meses.map((nome, indice) => <option key={nome} value={indice + 1}>{nome}</option>)}
+          </select>
+        </label>
+        <label>Ano
+          <select aria-label="Ano da validade" value={ano} onChange={(evento) => atualizarData(dia, mes, Number(evento.target.value))}>
+            {anos.map((numero) => <option key={numero} value={numero}>{numero}</option>)}
+          </select>
+        </label>
+      </div>
+      <small>Validade selecionada: {formatarDataBrasileira(valor)}</small>
+    </div>
+  );
+}
+
 function FormularioPedido({ dados, aoAlterar, aoEnviar, textoBotao }) {
   const destinos = dados.estabelecimentos
     ?? [dados.estabelecimento].filter(Boolean);
@@ -42,7 +100,7 @@ function FormularioPedido({ dados, aoAlterar, aoEnviar, textoBotao }) {
     const selecionado = destinos.includes(nome);
     const novosDestinos = selecionado
       ? destinos.filter((item) => item !== nome)
-      : [...destinos, nome].slice(0, 2);
+      : [...destinos, nome];
     aoAlterar({ ...dados, estabelecimentos: novosDestinos });
   };
 
@@ -83,13 +141,12 @@ function FormularioPedido({ dados, aoAlterar, aoEnviar, textoBotao }) {
       </div>
 
       <fieldset className="seletor-estabelecimentos">
-        <legend>Estabelecimentos (selecione até dois)</legend>
+        <legend>Estabelecimentos</legend>
         {estabelecimentos.map((nome) => (
           <label className="linha-checkbox" key={nome}>
             <input
               type="checkbox"
               checked={destinos.includes(nome)}
-              disabled={!destinos.includes(nome) && destinos.length >= 2}
               onChange={() => alternarEstabelecimento(nome)}
             />
             {nome}
@@ -97,19 +154,42 @@ function FormularioPedido({ dados, aoAlterar, aoEnviar, textoBotao }) {
         ))}
       </fieldset>
 
-      <label>
-        Prazo de validade
-        <select
-          value={dados.prazo}
-          onChange={(e) => aoAlterar({ ...dados, prazo: e.target.value })}
+      <fieldset className="seletor-prazo-validade">
+        <legend>Prazo de validade</legend>
+        <div className="opcoes-prazo-validade">
+          <button
+            type="button"
+            className={dados.modoValidade !== 'data' ? 'selecionado' : ''}
+            aria-pressed={dados.modoValidade !== 'data'}
+            onClick={() => aoAlterar({ ...dados, prazo: '7', modoValidade: 'semana', validadeEscolhida: '' })}
+          >
+            Uma semana
+          </button>
+          <button
+            type="button"
+            className={dados.modoValidade === 'data' ? 'selecionado' : ''}
+            aria-pressed={dados.modoValidade === 'data'}
+            onClick={() => aoAlterar({
+              ...dados,
+              modoValidade: 'data',
+              validadeEscolhida: dados.validadeEscolhida || obterDataDeUmaSemana(),
+            })}
+          >
+            Escolher data
+          </button>
+        </div>
+        {dados.modoValidade === 'data' && (
+          <SeletorDataValidade
+            valor={dados.validadeEscolhida}
+            aoAlterar={(validadeEscolhida) => aoAlterar({ ...dados, validadeEscolhida })}
+          />
+        )}
+      </fieldset>
 
-        >
-          <option value="7">Uma semana</option>
-          <option value="30">Um mês</option>
-        </select>
-      </label>
-
-      <button className="acao-principal" disabled={destinos.length === 0}>
+      <button
+        className="acao-principal"
+        disabled={destinos.length === 0 || (dados.modoValidade === 'data' && !formatarDataBrasileira(dados.validadeEscolhida))}
+      >
         {textoBotao}
       </button>
     </form>
@@ -126,6 +206,11 @@ export default function Configuracoes({
   corFundo,
   aoAlterarCorFundo,
   aoRestaurarCorFundo,
+  tipografia,
+  aoAlterarTipografia,
+  fornecedores = [],
+  fornecedorSelecionado,
+  aoSelecionarFornecedor,
 }) {
   const [secao, setSecao] = useState('contas');
   const [contas, setContas] = useState(contasIniciais);
@@ -136,6 +221,8 @@ export default function Configuracoes({
   const [pedidoEditando, setPedidoEditando] = useState(null);
   const [busca, setBusca] = useState('');
   const [local, setLocal] = useState('todos');
+  const [buscaEdicao, setBuscaEdicao] = useState('');
+  const [localEdicao, setLocalEdicao] = useState('todos');
   const historico = useMemo(() => {
     return pedidos.filter(
       (pedido) =>
@@ -143,6 +230,10 @@ export default function Configuracoes({
         && pedido.nome.toLowerCase().includes(busca.toLowerCase()),
     );
   }, [pedidos, busca, local]);
+  const pedidosEditaveis = useMemo(
+    () => filtrarPedidosEdicao(pedidos, buscaEdicao, localEdicao),
+    [pedidos, buscaEdicao, localEdicao],
+  );
 
   const alternarAcesso = (nome) => {
     setConta((atual) => ({
@@ -188,7 +279,7 @@ export default function Configuracoes({
     ['contas', '▣', 'Gerenciar contas', 'Acessos e permissões'],
     ['pedido', '＋', 'Novo pedido', 'Solicitação rápida'],
     ['editar-pedidos', '✎', 'Editar pedidos', 'Dados e validade'],
-    ['preferencias', '✦', 'Preferências', 'Aparência e notificações'],
+    ['preferencias', '✦', 'Preferências', 'Aparência e visualização'],
     ['historico', '◷', 'Histórico geral', 'Pedidos por data e local']
   ];
 
@@ -200,7 +291,7 @@ export default function Configuracoes({
           <h1>Configurações e pedidos</h1>
           <p>Gerencie acessos, pedidos e preferências do sistema.</p>
         </div>
-        <button className="acao-tabela" onClick={aoVoltar}>
+        <button type="button" className="acao-tabela botao-voltar" onClick={aoVoltar}>
           ← Voltar
         </button>
       </header>
@@ -334,8 +425,28 @@ export default function Configuracoes({
                   textoBotao="Salvar alterações"
                 />
               ) : (
-                <div className="lista-historico">
-                  {pedidos.map((pedido) => (
+                <>
+                  <div className="controles-lista filtros-edicao">
+                    <label>
+                      Estabelecimento
+                      <select value={localEdicao} onChange={(e) => setLocalEdicao(e.target.value)}>
+                        <option value="todos">Todos</option>
+                        {estabelecimentos.map((nome) => <option key={nome}>{nome}</option>)}
+                      </select>
+                    </label>
+                    <label className="campo-busca">
+                      Buscar pedido
+                      <input
+                        type="search"
+                        aria-label="Buscar pedido pelo nome do produto"
+                        value={buscaEdicao}
+                        onChange={(e) => setBuscaEdicao(e.target.value)}
+                        placeholder="Nome do produto"
+                      />
+                    </label>
+                  </div>
+                  <div className="lista-historico">
+                  {pedidosEditaveis.map((pedido) => (
                     <article key={pedido.id}>
                       <b>{pedido.nome}</b>
                       <span>{pedido.estabelecimento}</span>
@@ -345,13 +456,23 @@ export default function Configuracoes({
                         const destinos = pedidos
                           .filter((item) => (item.grupoPedido ?? item.id) === grupoPedido)
                           .map((item) => item.estabelecimento);
-                        setPedidoEditando({ ...pedido, estabelecimentos: destinos, prazo: '7' });
+                        setPedidoEditando({
+                          ...pedido,
+                          estabelecimentos: destinos,
+                          prazo: '7',
+                          modoValidade: 'semana',
+                          validadeEscolhida: '',
+                        });
                       }}>
                         Editar
                       </button>
                     </article>
                   ))}
-                </div>
+                  {!pedidosEditaveis.length && (
+                    <p className="estado-vazio">Nenhum pedido corresponde aos filtros.</p>
+                  )}
+                  </div>
+                </>
               )}
             </>
           )}
@@ -380,24 +501,38 @@ export default function Configuracoes({
                   </div>
                 </div>
                 <label>Tipografia
-                  <select defaultValue="DM Sans">
+                  <select value={tipografia} onChange={(e) => aoAlterarTipografia(e.target.value)}>
                     <option>DM Sans</option>
-                    <option>Inter</option>
+                    <option>Instrument Serif</option>
                     <option>Arial</option>
                   </select>
                 </label>
                 <hr />
-                <label className="alternador">
-                  Notificar novas ofertas
-                  <input type="checkbox" defaultChecked />
-                  <i />
+                <label>
+                  Fornecedor para visualizar
+                  <select
+                    value={fornecedorSelecionado?.email ?? ''}
+                    onChange={(e) => aoSelecionarFornecedor(e.target.value)}
+                    disabled={!fornecedores.length}
+                  >
+                    {fornecedores.map((fornecedor) => (
+                      <option key={fornecedor.email} value={fornecedor.email}>
+                        {fornecedor.empresa} — {fornecedor.email}
+                      </option>
+                    ))}
+                  </select>
                 </label>
-                <label className="alternador">
-                  Visão como fornecedor
-                  <input type="checkbox" checked={simulando} onChange={(e) => aoSimularFornecedor(e.target.checked)} />
-                  <i />
-                </label>
-                <small>Exibe menus e limitações do fornecedor.</small>
+                <div className="alternador">
+                  <span id="rotulo-visao-fornecedor">Visão como fornecedor</span>
+                  <button
+                    type="button"
+                    className="botao-alternador"
+                    role="switch"
+                    aria-checked={simulando}
+                    aria-labelledby="rotulo-visao-fornecedor"
+                    onClick={() => aoSimularFornecedor(!simulando)}
+                  />
+                </div>
               </div>
             </>
           )}

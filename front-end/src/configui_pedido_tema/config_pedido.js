@@ -1,9 +1,17 @@
 import { useState } from 'react';
 import { pedidosIniciais } from '../dados/pedidosIniciais.js';
+import { formatarDataBrasileira } from '../dados/formatar_data.js';
+
+function obterValidade(dados, dataAtual) {
+  if (dados.modoValidade === 'data') return formatarDataBrasileira(dados.validadeEscolhida);
+
+  const validade = new Date(dataAtual);
+  validade.setDate(validade.getDate() + Number(dados.prazo || 7));
+  return validade.toLocaleDateString('pt-BR');
+}
 
 export function criarNovosPedidos(lista, dados, dataAtual, grupoPedido) {
-  const validade = new Date(dataAtual);
-  validade.setDate(validade.getDate() + Number(dados.prazo));
+  const validade = obterValidade(dados, dataAtual);
 
   const destinos = dados.estabelecimentos?.length
     ? dados.estabelecimentos
@@ -20,7 +28,8 @@ export function criarNovosPedidos(lista, dados, dataAtual, grupoPedido) {
     ofertaFornecedor: null,
     fornecedor: '',
     dataOferta: new Date(dataAtual).toLocaleDateString('pt-BR'),
-    validade: validade.toLocaleDateString('pt-BR'),
+    dataPedido: new Date(dataAtual).toLocaleDateString('pt-BR'),
+    validade,
     estabelecimento,
     avaliacao: 'Novo',
   }));
@@ -45,8 +54,7 @@ export function atualizarOfertaPedido(lista, id, preco, usuario, dataOferta) {
 }
 
 export function editarGrupoPedidos(lista, id, dados, dataAtual, idBase = Date.now()) {
-  const validade = new Date(dataAtual);
-  validade.setDate(validade.getDate() + Number(dados.prazo));
+  const validade = obterValidade(dados, dataAtual);
 
   const pedidoOriginal = lista.find((pedido) => pedido.id === id);
   if (!pedidoOriginal) return lista;
@@ -66,14 +74,17 @@ export function editarGrupoPedidos(lista, id, dados, dataAtual, idBase = Date.no
     categoria: dados.nome.toLowerCase(),
     quantidade: Number(dados.quantidade),
     estabelecimento: destino,
-    validade: validade.toLocaleDateString('pt-BR'),
+    validade,
   }));
 
   return [...pedidosNaoRelacionados, ...pedidosAtualizados];
 }
 
 export function usePedidos(usuario) {
-  const [pedidos, setPedidos] = useState(pedidosIniciais);
+  const [pedidos, setPedidos] = useState(() => pedidosIniciais.map((pedido) => ({
+    ...pedido,
+    dataPedido: pedido.dataPedido ?? pedido.dataOferta,
+  })));
 
   const criarPedido = (dados) => {
     const dataAtual = new Date();
@@ -83,7 +94,13 @@ export function usePedidos(usuario) {
 
   const enviarOferta = (id, preco) => {
     const dataOferta = new Date();
-    setPedidos((lista) => atualizarOfertaPedido(lista, id, preco, usuario, dataOferta));
+    setPedidos((lista) => atualizarOfertaPedido(
+      lista,
+      id,
+      preco,
+      usuario,
+      dataOferta,
+    ));
   };
 
   const editarPedido = (id, dados) => {
