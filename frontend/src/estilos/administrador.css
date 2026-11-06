@@ -1,0 +1,80 @@
+.cabecalho-gestao {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.cabecalho-gestao h1 {
+  margin: 0 0 4px;
+  font-size: 20px;  
+}
+
+.cabecalho-gestao > span {
+  color: var(--destaque);
+  background: #2a151d;
+  border-radius: 20px;
+  padding: 0 8px;
+}
+
+.linha-pedido-admin small {
+  color: var(--texto-suave);
+  font-size: 8px;
+}
+
+.linha-pedido-admin > b, .preco-referencia {
+  width: 80px;
+  text-align: right;
+  font-size: 11px;
+}
+
+.quantidade-valor {
+  min-width: 72px;
+  padding: 6px 8px;
+  border: 1px solid #3d3d48;
+  border-radius: 5px;
+  background: #303039;
+  color: #f0f0f3;
+  font-size: 9px;
+  font-style: normal;
+  text-align: center;
+}
+
+.acao-tabela {
+  border: 1px solid #42424b;
+  border-radius: 4px;
+  background: #25252c;
+  color: #e5e5e8;
+  padding: 6px 8px;
+  font-size: 9px;
+}
+
+.acao-tabela.excluir {
+  color: #ff9aaa;
+  border-color: #763042;
+}
+
+.estado-vazio {
+  color: var(--texto-suave);
+  padding: 25px;
+  text-align: center;
+}
+
+.seletor-estabelecimentos {
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.seletor-estabelecimentos .linha-checkbox {
+  padding: 8px 10px;
+  border: 1px solid #373740;
+  border-radius: 5px;
+  background: #18181e;
+  cursor: pointer;
+}
+
+.acoes-cor {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}

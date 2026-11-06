@@ -1,0 +1,307 @@
+.acao-principal {
+  border: 0;
+  border-radius: 18px;
+  background: linear-gradient(90deg, #b21c36, #810e20);
+  color: #fff;
+  padding: 11px;
+  font-size: 11px;
+  font-weight: 700;
+  box-shadow: 0 7px 16px #7b102555;
+}
+
+.acao-principal:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+.aplicacao {
+  min-height: 100vh;
+  display: flex;
+}
+
+.aplicacao.modo-admin {
+  background: var(--fundo-admin, var(--fundo));
+}
+
+.barra-lateral {
+  width: 70px;
+  min-height: 100vh;
+  border-right: 1px solid var(--borda);
+  background: #151519;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.espaco-logo {
+  height: 52px;
+}
+
+.lista-estabelecimentos {
+  width: 100%;
+  display: grid;
+  gap: 13px;
+}
+
+.estabelecimento, .atalho-estatisticas {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: #8d8d96;
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+  padding: 5px 2px;
+  font-size: 8px;
+}
+  
+.estabelecimento i, .atalho-estatisticas i {
+  font-size: 17px;
+  font-style: normal;
+}
+
+.marca-estabelecimento {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #40404a;
+  border-radius: 8px;
+  font-size: 8px !important;
+  font-weight: 800;
+  letter-spacing: -.4px;
+}
+
+.marca-restaurante {
+  color: #fff;
+  background: linear-gradient(135deg, #a31b36, #651124);
+  border-color: #c92a49;
+}
+
+.marca-sushi-um {
+  color: #f0d7af;
+  background: linear-gradient(135deg, #3d2932, #1f1d27);
+  border-color: #765057;
+}
+
+.marca-sushi-dois {
+  color: #d8edf5;
+  background: linear-gradient(135deg, #19404a, #1a202d);
+  border-color: #36717d;
+}
+
+.marca-estatistica {
+  color: #f5d58b;
+  background: #292931;
+  border-color: #595766;
+}
+
+.estabelecimento.ativo {
+  color: #fff;
+}
+
+.estabelecimento.ativo i {
+  padding: 8px;
+  background: var(--destaque);
+  border-radius: 7px;
+}
+
+.atalho-estatisticas {
+  margin-top: 12px;
+}
+
+.atalho-estatisticas.ativo {
+  color: #fff;
+  position: relative;
+}
+
+.atalho-estatisticas.ativo::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 5px;
+  height: 28px;
+  width: 4px;
+  background: var(--destaque);
+  border-radius: 0 3px 3px 0;
+}
+
+.rodape-lateral {
+  margin-top: auto;
+  display: grid;
+  gap: 13px;
+  justify-items: center;
+  padding-bottom: 18px;
+}
+
+.botao-icone, .foto-perfil {
+  width: 29px;
+  height: 29px;
+  border-radius: 50%;
+  border: 1px solid #32323a;
+  background: transparent;
+  color: #a8a8b0;
+}
+
+.foto-perfil {
+  background: #f4f4f4;
+  color: #222;
+  border: 0;
+  overflow: hidden;
+  font-size: 8px;
+}
+
+.foto-perfil img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.botao-sair {
+  border: 0;
+  background: transparent;
+  color: #a8a8b0;
+  font-size: 17px;
+}
+
+.conteudo-principal {
+  flex: 1;
+  min-width: 0;
+}
+
+.pagina {
+  width: min(calc(100% - 100px), 1800px);
+  margin: 0 auto;
+  padding: 48px 0 80px;
+}
+
+.cabecalho-pagina, .cabecalho-configuracoes {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 26px;
+}
+
+.sobretitulo {
+  margin: 0 0 7px;
+  color: var(--destaque);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .1em;
+}
+
+.cabecalho-pagina h1, .cabecalho-configuracoes h1 {
+  margin: 0 0 6px;
+  font-size: 27px;
+  letter-spacing: -.04em;
+}
+
+.cabecalho-pagina p:not(.sobretitulo), .cabecalho-configuracoes p:not(.sobretitulo), .cabecalho-gestao p {
+  margin: 0;
+  color: var(--texto-suave);
+  font-size: 11px;
+}
+
+.cabecalho-gestao {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.cabecalho-gestao h1 {
+  margin: 0 0 4px;
+  font-size: 20px;
+}
+
+.cabecalho-gestao > span {
+  color: var(--destaque);
+  background: #2a151d;
+  border-radius: 20px;
+  padding: 0 8px;
+}
+
+.controles-lista, .controles-estatisticas {
+  display: flex;
+  gap: 12px;
+  border-top: 1px solid var(--borda);
+  border-bottom: 1px solid var(--borda);
+  padding: 13px 0;
+  margin-bottom: 16px;
+}
+
+.controles-lista label, .controles-estatisticas label {
+  display: grid;
+  gap: 5px;
+  color: var(--texto-suave);
+  font-size: 8px;
+}
+
+.campo-busca {
+  margin-left: auto;
+}
+
+.controles-estatisticas, .controles-lista {
+  border-color: #303039;
+}
+
+.controles-estatisticas select, .controles-estatisticas input,
+.controles-lista select, .controles-lista input {
+  background: #1d1d23;
+}
+
+.lista-pedidos-admin, .lista-pedidos-fornecedor {
+  display: grid;
+  gap: 9px;
+}
+
+.linha-pedido-admin, .linha-pedido-fornecedor {
+  min-height: 55px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 9px;
+  border: 1px solid var(--borda);
+  border-radius: 7px;
+  background: var(--superficie-clara);
+  box-shadow: 0 10px 24px #0003;
+}
+
+.imagem-produto {
+  width: 35px;
+  height: 35px;
+  flex: none;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #eee, #bcbcbc);
+}
+
+.informacoes-produto {
+  flex: 1;
+  min-width: 0;
+}
+
+.informacoes-produto > div {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.informacoes-produto h2 {
+  margin: 0;
+  font-size: 10px;
+  text-transform: lowercase;
+}
+
+.informacoes-produto span {
+  padding: 2px 4px;
+  border-radius: 2px;
+  background: #35353d;
+  color: #d2d2d5;
+  font-size: 6px;
+}
+
+.informacoes-produto p {
+  margin: 4px 0 0;
+  color: #d7b923;
+  font-size: 8px;
+}
